@@ -52,7 +52,7 @@ export class ProductsController {
   @Put('/:id')
   public updateProduct(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateProductDto,
+    @Body(new ValidationPipe()) body: UpdateProductDto,
   ) {
     const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('product not found');
