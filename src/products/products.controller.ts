@@ -24,7 +24,9 @@ export class ProductsController {
   ];
 
   @Post()
-  public createNewProduct(@Body(new ValidationPipe()) body: CreateProductDto) {
+  public createNewProduct(
+    @Body(new ValidationPipe({ whitelist: true })) body: CreateProductDto,
+  ) {
     const newProduct: ProducType = {
       id: this.products.length + 1,
       title: body.title,
