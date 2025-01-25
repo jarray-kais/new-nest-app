@@ -1,10 +1,20 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class CreateProductDto {
+  @IsString({ message: 'title should be a string' })
   @IsNotEmpty()
-  @IsString()
+  @MinLength(2)
+  @MaxLength(150)
   title: string;
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
+  @Min(0, { message: 'price should be not less than zero' })
   price: number;
 }
