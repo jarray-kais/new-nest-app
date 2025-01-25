@@ -7,9 +7,12 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.tdo';
+import { Request, Response } from 'express';
 
 type ProducType = { id: number; title: string; price: number };
 
@@ -20,6 +23,18 @@ export class ProductsController {
     { id: 2, title: 'pen', price: 5 },
     { id: 3, title: 'laptop', price: 400 },
   ];
+
+  //express-way
+  @Post('express-way')
+  public createNewProductExpressWay(@Req() req: Request, @Res() res: Response) {
+    const newProduct: ProducType = {
+      id: this.products.length + 1,
+      title: req.body.title,
+      price: req.body.price,
+    };
+    this.products.push(newProduct);
+    res.status(201).json(newProduct);
+  }
 
   @Post()
   public createNewProduct(@Body() body: CreateProductDto) {
