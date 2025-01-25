@@ -5,14 +5,13 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
-  Req,
-  Res,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.tdo';
-import { Request, Response } from 'express';
 
 type ProducType = { id: number; title: string; price: number };
 
@@ -24,25 +23,14 @@ export class ProductsController {
     { id: 3, title: 'laptop', price: 400 },
   ];
 
-  //express-way
-  @Post('express-way')
-  public createNewProductExpressWay(@Req() req: Request, @Res() res: Response) {
-    const newProduct: ProducType = {
-      id: this.products.length + 1,
-      title: req.body.title,
-      price: req.body.price,
-    };
-    this.products.push(newProduct);
-    res.status(201).json(newProduct);
-  }
-
   @Post()
-  public createNewProduct(@Body() body: CreateProductDto) {
+  public createNewProduct(@Body(new ValidationPipe()) body: CreateProductDto) {
     const newProduct: ProducType = {
       id: this.products.length + 1,
       title: body.title,
       price: body.price,
     };
+    console.log(body);
     this.products.push(newProduct);
     return newProduct;
   }
@@ -54,8 +42,8 @@ export class ProductsController {
 
   //Get : /api/products/:id
   @Get('/:id')
-  public getSingleProducts(@Param('id') id: string) {
-    const product = this.products.find((p) => p.id === parseInt(id));
+  public getSingleProducts(@Param('id', ParseIntPipe) id: number) {
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('product not found');
     return product;
   }
@@ -63,10 +51,10 @@ export class ProductsController {
   //PUT : /api/products/:id
   @Put('/:id')
   public updateProduct(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateProductDto,
   ) {
-    const product = this.products.find((p) => p.id === parseInt(id));
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('product not found');
     console.log(body);
     return { message: 'Product updated successfully' };
@@ -74,9 +62,26 @@ export class ProductsController {
 
   //delete : /api/products/:id
   @Delete('/:id')
-  public deleteProduct(@Param('id') id: string) {
-    const product = this.products.find((p) => p.id === parseInt(id));
+  public deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('product not found');
     return { message: 'Product deleted successfully' };
   }
 }
+//express-way
+/*   @Post('express-way')
+  public createNewProductExpressWay(@Req() req: Request, @Res({passthrough : true}) res: Response , @Headers headers : any) {
+    const newProduct: ProducType = {
+      id: this.products.length + 1,
+      title: req.body.title,
+      price: req.body.price,
+    };
+    this.products.push(newProduct);
+    console.log(headers)
+    res.status(201).json(newProduct);
+
+    res.cookie('authCookie', 'this is a cookie', {
+    httpOnly: true
+    maxAge : 120
+    });
+  } */
