@@ -8,7 +8,6 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.tdo';
@@ -25,8 +24,10 @@ export class ProductsController {
 
   @Post()
   public createNewProduct(
-    @Body(new ValidationPipe({ whitelist: true })) body: CreateProductDto,
+    @Body()
+    body: CreateProductDto,
   ) {
+    console.log(body);
     const newProduct: ProducType = {
       id: this.products.length + 1,
       title: body.title,
@@ -54,7 +55,7 @@ export class ProductsController {
   @Put('/:id')
   public updateProduct(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe()) body: UpdateProductDto,
+    @Body() body: UpdateProductDto,
   ) {
     const product = this.products.find((p) => p.id === id);
     if (!product) throw new NotFoundException('product not found');
