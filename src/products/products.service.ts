@@ -1,12 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.tdo';
 import { CreateProductDto } from './dtos/create-product.dto';
-import { UsersService } from 'src/users/users.service';
 
 type ProducType = { id: number; title: string; price: number };
 @Injectable()
 export class ProductsService {
-  constructor(private readonly userSerice: UsersService) {}
   private products: ProducType[] = [
     { id: 1, title: 'book', price: 10 },
     { id: 2, title: 'pen', price: 5 },
@@ -31,8 +29,7 @@ export class ProductsService {
    */
   public getAll() {
     const products = this.products;
-    const users = this.userSerice.getAll();
-    return { products, users };
+    return products;
   }
   /**
    *Get one product by id
