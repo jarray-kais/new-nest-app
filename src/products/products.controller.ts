@@ -11,10 +11,14 @@ import {
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.tdo';
 import { ProductsService } from './products.service';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('/api/products')
 export class ProductsController {
-  constructor(private readonly productService: ProductsService) {}
+  constructor(
+    private readonly productService: ProductsService,
+    private readonly config: ConfigService,
+  ) {}
   @Post()
   public createNewProduct(
     @Body()
@@ -25,6 +29,9 @@ export class ProductsController {
 
   @Get()
   public getAllProducts() {
+    const example = this.config.get<string>('EXAMPLE');
+    const example1 = process.env.EXAMPLE;
+    console.log({ example, example1 });
     return this.productService.getAll();
   }
 
