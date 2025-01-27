@@ -4,7 +4,7 @@ import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/product.entity';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,15 +14,20 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     ProductsModule,
     ReviewsModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      database: 'nestjs-app-db',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'root',
-      entities: [Product],
-      synchronize: true, //only in development
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          type: 'postgres',
+          database: config.get<string>('DB_DATABASE'),
+          host: 'localhost',
+          port: config.get<number>('DB_PORT'),
+          username: config.get<string>('DB_USERNAME'),
+          password: config.get<string>('DB_PASSWORD'),
+          entities: [Product],
+          synchronize: true, //only in development
+        };
+      },
     }),
   ],
 })
