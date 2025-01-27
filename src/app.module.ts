@@ -4,8 +4,13 @@ import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/product.entity';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env.development.local', '.env.test.local'],
+      isGlobal: true,
+    }),
     UsersModule,
     ProductsModule,
     ReviewsModule,
