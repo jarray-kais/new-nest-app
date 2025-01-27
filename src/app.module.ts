@@ -8,7 +8,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.test.local'],
+      envFilePath: [
+        `.env.${process.env.NODE_ENV}.local`,
+        `.env.${process.env.NODE_ENV}.local`,
+      ],
       isGlobal: true,
     }),
     UsersModule,
@@ -25,7 +28,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: config.get<string>('DB_USERNAME'),
           password: config.get<string>('DB_PASSWORD'),
           entities: [Product],
-          synchronize: true, //only in development
+          synchronize: process.env.NODE_ENV !== 'production', //only in development
         };
       },
     }),
